@@ -117,44 +117,44 @@
 
 \chapter{State of the art}
 
-In this chapter, we explore the existing relevant work on OCR models and detection of text inside images. We will focus on the most advanced models and use cases. We won't be looking so deeply into research papers around OCR as the goal of this thesis wasn't to develop better OCR tool that the ones we can use, but to find and implement a solution with the existing OCR tools we have.
+In this chapter, we explore the existing relevant work on OCR models and detection of text inside images. We will focus on the most advanced models and use cases. We will not be looking so deeply into research papers around OCR as the goal of this thesis was not to develop better OCR tool than the ones we can use, but to find and implement a solution with the existing OCR tools we have.
 
-Very useful projects for navigating current OCR engines was Wikipedia\cite{ocrwikipedia} and AwesomeOCR\cite{awesomeocr}. In both projects we have a table of the most popular OCR engines along with their license, portabilty to operating systems, programming language they're written in and also languages they support.
+Very useful projects for navigating current OCR engines were Wikipedia\cite{ocrwikipedia} and AwesomeOCR\cite{awesomeocr}. In both projects, we have a table of the most popular OCR engines along with their license, portability to operating systems, programming language they're written in, and also languages they support.
 
 As I'm writing this, the last update made to the AwsomeOCR project was on Nov 2021, which means that it could be abandoned. Nonetheless, this project helped me find the best OCR for this thesis so I decided to include it.
 
 \section{Google's Could vision API \cite{googleapi}}
 
-Google has its own proprietary tools for OCR. They provide an easy way of detecting text inside of images, pdfs, and they also claim to detect handwritten text.
+Google has its own proprietary tools for OCR. They provide an easy way of detecting text inside images, pdfs, and they also claim to detect handwritten text.
 
 A benefit of using this tool is that the user will get state of the art OCR and he doesn't have to get \emph{his hands dirty}, meaning he doesn't have to understand and set up the models doing the OCR. The con of using such a service is that we have to pay Google, usually per image or per page when OCR-ing pdfs.
 
-Similar tools provide numberos big cloud providers, like Microsoft with Azure\cite{azurevision} or Amazon with AWS\cite{awstextract}. I did not include proprietary tools like this one in my work, I only focused on free and opensource solutions.
+Similar tools provide numberous big cloud providers, like Microsoft with Azure\cite{azurevision} or Amazon with AWS\cite{awstextract}. I did not include proprietary tools like this one in my work, I only focused on free and opensource solutions.
 
 \section{Tesseract OCR\cite{tesseract}}
 
-Tesseract is an opensource OCR project that dates back all the way to 90s of the 20th century. It was a proprietary software owned and developed by Hewlett-Packard Laboratories but opensourced in 2005.
+Tesseract is an open-source OCR project that dates back all the way to the 90s of the 20th century. It was a proprietary software owned and developed by Hewlett-Packard Laboratories but open-sourced in 2005.
 
-Tesseract 4 uses LSTM neural networks and works by detecting lines of text, while the previous version, Tesseract 3, was detecting groups of characters. Both of these approaches can be used when using this tool. This tool written in C++ and has almost no external dependencies, except for an IO (input-output) library.
+Tesseract 4 uses LSTM neural networks and works by detecting lines of text, while the previous version, Tesseract 3, was detecting groups of characters. Both of these approaches can be used when using this tool. This tool is written in C++ and has almost no external dependencies, except for an IO (input-output) library.
 
-Tesseract OCR only provides the OCR engine as a C++ library and an CLI (command line interface) tesseract, but there are third part GUIs available and also linked on the tesseract github repository page.
+Tesseract OCR only provides the OCR engine as a C++ library and a CLI (command line interface), but there are third part GUIs available and also linked on the tesseract GitHub repository page.
 
-Setting up tesseract can be more problematic than using a cloud based solution, but now you can see the code that is processing your images and change/improve it aswell.
+Setting up tesseract can be more problematic than using a cloud-based solution, but now you can see the code that is processing your images and change/improve it as well.
 
 \section{EasyOCR\cite{easyocr}}
 
-EasyOCR is an opensource OCR tool using the \emph{PyTorch}\cite{pytorch} AI library. EasyOCR aims to be a framework with interchangable parts for other OCR implementations, but it has its own OCR engine built in it aswell. You can use EasyOCR out of the box with python or you can implement your own/change the OCR engine and then EasyOCR will only provide a framework for that engine to be run in.
+EasyOCR is an open-source OCR tool using the \emph{PyTorch}\cite{pytorch} AI library. EasyOCR aims to be a framework with interchangeable parts for other OCR implementations, but it has its own OCR engine built in it as well. You can use EasyOCR out of the box with python or you can implement your own/change the OCR engine and then EasyOCR will only provide a framework for that engine to be run in.
 
-EasyOCR is written in python, and can be used online without downloading for example on HuggingFace \href{https://huggingface.co/spaces/tomofi/EasyOCR}{here}.
+EasyOCR is written in python and can be used online without downloading for example on HuggingFace \href{https://huggingface.co/spaces/tomofi/EasyOCR}{here}.
 
 \section{Benchmarking different OCR solutions}
 
-We named some OCR engines but don't have any tools on how to measure their performance. There are papers that focus on this, benchmarking these OCR engines and measuring their accuracy\cite{benchmark}.
+We named some OCR engines but don't have any tools for measuring their performance. There are articles and research papers that focus on this, benchmarking these OCR engines and then measuring their accuracy\cite{benchmark}.
 
-In the cited article the solutions that are being compared are AWS Textract\cite{awstextract}, Google Cloud Vision API\cite{googleapi}, ABBYY FineReader 15, Microsoft Azure Computer Vision API\cite{azurevision} and Tesseract OCR Engine\cite{tesseract}. We already saw 4 of these in the previous sections, the only one I didn't mention here is the ABBY FineReader.
+In the cited article the OCR engines that are being compared are AWS Textract\cite{awstextract}, Google Cloud Vision API\cite{googleapi}, ABBYY FineReader 15, Microsoft Azure Computer Vision API\cite{azurevision} and Tesseract OCR Engine\cite{tesseract}. We already saw 4 of these in the previous sections, the only one I didn't mention yet is the ABBY FineReader.
 
-We can see that AWS Textract performs the best with Google Cloud Vision being just as good or just behind. AWS managed to get +98\% accuracy with text images and also handwritten images, while for example Azure's solution had under 20\% accuracy. If we take away the handwritten texts, all OCR perform well, with only a small amount of differences.
+We can see that AWS Textract performed the best with Google Cloud Vision being just as good or just behind. AWS managed to get +98\% accuracy with normal text and also handwritten text, while for example, Azure's solution has under 20\% accuracy for the handwritten category. If we take away the handwritten texts, all OCRs performed quite well, with only a small amount of differences.
 
-We can see that the only opensourced project in the comparison, Tesseract, didn't perform as the best proprietary solutions. Only Azure's OCR performed worse than Tesseract.
+We can see that the only open-sourced project in the comparison, Tesseract, didn't perform as well as the best proprietary solutions. Only Azure's OCR performed worse than Tesseract in some categories.
 
 \end{document}
