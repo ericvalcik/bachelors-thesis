@@ -133,47 +133,54 @@ The practical part consists of the remaining chapters that being \textbf{Definit
 
 In the last chapter, \textbf{Conclusion}, I evaluate the final implementation as a classifying model and discuss the possible improvements.
 
-\chapter{State of the art}
+\chapter{State of the Art}
 
-In this chapter, we explore the existing relevant work on OCR models and the detection of text inside images. We will focus on the most advanced models and use cases. We will not be looking so profoundly into research papers around OCR as the goal of this thesis was not to develop better OCR models than the ones we have now but to find and use a solution with the existing OCR tools we have.
+In this chapter, I explore the existing relevant work on OCR models and the detection of text inside images. I focus on the most advanced models and use cases. I am not focusing on research papers about OCR as the goal of this thesis was not to develop a better OCR model than the ones we have now but to find and use a solution with the existing OCR tools.
 
-Beneficial projects for navigating current OCR engines were Wikipedia\cite{ocrwikipedia} and AwesomeOCR\cite{awesomeocr}. In both projects, we have a table of the most popular OCR engines, their license, portability to operating systems, programming language they're written in, and languages they support.
+Beneficial sources for navigating current OCR engines were Wikipedia\,\cite{ocrwikipedia} and AwesomeOCR\,\cite{awesomeocr}. Both sources offer a table of the most popular OCR engines, their license, portability to operating systems, the programming language they're written in, and the languages they support. The last update made to the AwsomeOCR project was on Nov 2021.
 
-At the time of writing this, the last update made to the AwsomeOCR project was on Nov 2021, which means that it could be abandoned. Nonetheless, this project was helpful for this thesis.
+I decided to focus more on the open-source tools for my thesis and this section, as I do not want to be using proprietary software in this work, but I'm mentioning them in this section briefly.
 
-\section{Google's Could vision API \cite{googleapi}}
+\section{Proprietary OCR tools}
 
-Google has its proprietary tools for OCR. They provide an easy way of detecting text inside images and pdfs and also claim to detect handwritten text.
+The proprietary tools provide an easy way of detecting and recognizing text inside images and pdfs. Google, for example, has its proprietary tools for OCR, such as Google Cloud Vision API\,\cite{googleapi}. Google also claims to detect and recognize handwritten text.
 
-A benefit of using this tool is that the user will get state-of-the-art OCR, and he does not have to get \emph{his hands dirty}, meaning he does not have to understand and set up the OCR models himself. The con of using such a service is that the user must pay Google, usually per image or page, when OCR-ing pdfs.
+A benefit of using such tools is that the user gets state-of-the-art OCR without complex configurations of the models, meaning he does not have to understand and set up the OCR models himself. The disadvantage of using such a service is having to pay Google, usually per image or per page, when OCR-ing pdfs.
 
-Similar tools provide numerous big cloud providers, like Microsoft with Azure\cite{azurevision} or Amazon with AWS\cite{awstextract}. This thesis does not use proprietary tools; it only focuses on free and open-source solutions.
+Similar tools are provided by numerous big cloud providers, like Microsoft with Azure Computer Vision API\,\cite{azurevision} or Amazon with AWS Textract\,\cite{awstextract}. This thesis does not use proprietary tools; it only focuses on free and open-source solutions.
 
-\section{Tesseract OCR\cite{tesseract}}
+\section{Tesseract OCR}
 
-\emph{Tesseract} is an open-source OCR project that dates back to the 90s of the 20th century. It was a proprietary software owned and developed by Hewlett-Packard Laboratories but open-sourced in 2005.
+\emph{Tesseract}\,\cite{tesseract} is an open-source OCR project that dates back to the 1990s. It was a proprietary software owned and developed by Hewlett-Packard Laboratories. It was open-sourced in 2005.
 
-Tesseract 4 uses LSTM neural networks and works by detecting lines of text, while the previous version, Tesseract 3, detects groups of characters. Both of these approaches can be used when using this tool. This tool is written in C++ and has almost no external dependencies except an IO (input-output) library.
+The latest version, Tesseract 4, uses LSTM neural networks and works by detecting lines of text, while the previous version, Tesseract 3, detects groups of characters. Both of these approaches can be used when using this tool.
 
-Tesseract OCR only provides the OCR engine as a C++ library and a CLI (command line interface). However, third-party GUIs are available and linked on the tesseract GitHub repository page.
+This tool is written in C++ and has almost no external dependencies except an IO (Input-Output) library.
+
+Tesseract OCR only provides the OCR engine as a C++ library and a CLI (Command Line Interface). However, third-party GUIs (Graphical User Interfaces) are available and linked on the Tesseract GitHub repository page.
 
 Setting up Tesseract can be more problematic than using a cloud-based solution, but all the code is accessible and can be changed or improved.
 
-\section{EasyOCR\cite{easyocr}}
+\section{EasyOCR}
 
-EasyOCR is an open-source OCR tool using the \emph{PyTorch}\cite{pytorch} AI library. EasyOCR aims to be a framework with interchangeable parts for other OCR implementations, but it also has its OCR engine built into it. EasyOCR can be used out of the box with Python or implement a custom OCR engine, and then EasyOCR will only provide a framework for that engine to run in.
+EasyOCR\,\cite{easyocr} is an open-source OCR tool using the \emph{PyTorch}\,\cite{pytorch} AI (Artificial Intelligence) library that can be used out of the box with Python. EasyOCR aims to be a framework with interchangeable parts for other OCR implementations, but it also has its OCR engine built into it as well. EasyOCR also provides the option to implement a custom OCR engine.
 
-EasyOCR is written in Python and can be used online without downloading, for example, on HuggingFace \href{https://huggingface.co/spaces/tomofi/EasyOCR}{here}.
+EasyOCR can be used online without downloading, for example, on HuggingFace\footnote{\href{https://huggingface.co/spaces/tomofi/EasyOCR}{https://huggingface.co/spaces/tomofi/EasyOCR}}.
 
 \section{Benchmarking different OCR solutions}
 
-Some articles and research papers focus on benchmarking these OCR engines and then measuring their accuracy\cite{benchmark}.
+To measure and compare the performance of the OCR tools benchmarking tools are developed. There are research papers and articles\,\cite{benchmark} that focus on exactly this.
 
-In the cited article, the OCR engines that are being compared are AWS Textract\cite{awstextract}, Google Cloud Vision API\cite{googleapi}, ABBYY FineReader 15, Microsoft Azure Computer Vision API\cite{azurevision} and Tesseract OCR Engine\cite{tesseract}. 4 of these OCRs are mentioned in the previous sections, the only one not mentioned yet is the ABBY FineReader.
+The overview in \cite{benchmark} compares AWS Textract\,\cite{awstextract}, Google Cloud Vision API\,\cite{googleapi}, ABBYY FineReader 15, Microsoft Azure Computer Vision API\,\cite{azurevision} and Tesseract OCR Engine
+,\cite{tesseract}.
 
-We can see that AWS Textract performed the best, with Google Cloud Vision being just as good or just behind. AWS managed to get +98\% accuracy with typed and handwritten text, while, for example, Azure's solution has under 20\% accuracy for the handwritten category. If we remove the handwritten text, all OCRs performed exceptionally well, with minor differences.
+We can see that AWS Textract performed the best, with Google Cloud Vision being just as good or just behind.
 
-We can see that the only open-sourced project in the comparison, Tesseract, did not perform as well as the best proprietary solutions. Only Azure's OCR performed worse than Tesseract in some categories.
+AWS managed to get more than 98\% accuracy with typed and handwritten text, while, for example, Azure's solution has under 20\% accuracy for the handwritten category.
+
+Omitting the handwritten text, all OCRs performed exceptionally well, with minor differences.
+
+We can see that the only open-sourced project in the comparison, Tesseract, did not perform as well as the best proprietary solutions. Only Azure's OCR performed worse than Tesseract in some categories. This is usually the case as maintaining open-source projects is harder and more complicated, partly also because they are free.
 
 \chapter{OCR engines}
 
