@@ -115,46 +115,137 @@
 %% \printnoidxglossary[title={Abbreviations}, type=\acronymtype]
 %% \printnoidxglossary[title={Glossary}]
 
+\chapter{Introduction}
+
+Recognizing text in images is usually not a challenging task for a human, but it remains a challenging problem for the computer. The state-of-the-art models do not have such a problem recognizing typed text. However, the handwritten or somehow deformed text is still a subject for improvement and usually works as a comparison factor for OCR models.
+
+In this thesis, I'm developing a tool that gets an image as an input and outputs Czech text found in the image, if there is any. This output is then further used to classify images into two classes, \emph{with Czech text} and \emph{without Czech text}.
+
+This thesis is done in collaboration with Umimeto.org\cite{umimeto}, a learning portal focused mainly on students studying in elementary, middle, or high school. The portal has many fields, such as Mathematics, Czech, English, Informatics, and others. Users can practice these fields in an interactive way by playing games or solving puzzles.
+
+The motivation behind developing a tool for detecting Czech text in images is to make translating the whole Umimeto portal into different languages easier. The key goals are to not flag images that just have text in them but flag those images that have Czech text in them that should be translated. The final model should not be flagging images that only have text in them that does not have to be translated, for example, math notation or words like \emph{START}.
+
+The thesis is divided into two logical blocks. Theoretical and practical.
+
+The Theoretical part comprises the chapters \textbf{State of the art} and \textbf{OCR engines}. The first chapter discusses the current best approaches for OCR problems and refers to the best tools at the date of writing. The second chapter overviews specific OCR engines and evaluates if they suit the problem in this thesis.
+
+The practical part consists of the remaining chapters that being \textbf{Definition of the problem} and \textbf{Implementation}. The first chapter defines the problem in detail, specifying the exact form of input and output. The latter chapter goes through the libraries I used and why and discusses and explains the implementation.
+
+In the last chapter, \textbf{Conclusion}, I evaluate the final implementation as a classifying model and discuss the possible improvements.
+
 \chapter{State of the art}
 
-In this chapter, we explore the existing relevant work on OCR models and detection of text inside images. We will focus on the most advanced models and use cases. We will not be looking so deeply into research papers around OCR as the goal of this thesis was not to develop better OCR tool than the ones we can use, but to find and implement a solution with the existing OCR tools we have.
+In this chapter, we explore the existing relevant work on OCR models and the detection of text inside images. We will focus on the most advanced models and use cases. We will not be looking so profoundly into research papers around OCR as the goal of this thesis was not to develop better OCR models than the ones we have now but to find and use a solution with the existing OCR tools we have.
 
-Very useful projects for navigating current OCR engines were Wikipedia\cite{ocrwikipedia} and AwesomeOCR\cite{awesomeocr}. In both projects, we have a table of the most popular OCR engines along with their license, portability to operating systems, programming language they're written in, and also languages they support.
+Beneficial projects for navigating current OCR engines were Wikipedia\cite{ocrwikipedia} and AwesomeOCR\cite{awesomeocr}. In both projects, we have a table of the most popular OCR engines, their license, portability to operating systems, programming language they're written in, and languages they support.
 
-As I'm writing this, the last update made to the AwsomeOCR project was on Nov 2021, which means that it could be abandoned. Nonetheless, this project helped me find the best OCR for this thesis so I decided to include it.
+At the time of writing this, the last update made to the AwsomeOCR project was on Nov 2021, which means that it could be abandoned. Nonetheless, this project was helpful for this thesis.
 
 \section{Google's Could vision API \cite{googleapi}}
 
-Google has its own proprietary tools for OCR. They provide an easy way of detecting text inside images, pdfs, and they also claim to detect handwritten text.
+Google has its proprietary tools for OCR. They provide an easy way of detecting text inside images and pdfs and also claim to detect handwritten text.
 
-A benefit of using this tool is that the user will get state of the art OCR and he doesn't have to get \emph{his hands dirty}, meaning he doesn't have to understand and set up the models doing the OCR. The con of using such a service is that we have to pay Google, usually per image or per page when OCR-ing pdfs.
+A benefit of using this tool is that the user will get state-of-the-art OCR, and he does not have to get \emph{his hands dirty}, meaning he does not have to understand and set up the OCR models himself. The con of using such a service is that the user must pay Google, usually per image or page, when OCR-ing pdfs.
 
-Similar tools provide numberous big cloud providers, like Microsoft with Azure\cite{azurevision} or Amazon with AWS\cite{awstextract}. I did not include proprietary tools like this one in my work, I only focused on free and opensource solutions.
+Similar tools provide numerous big cloud providers, like Microsoft with Azure\cite{azurevision} or Amazon with AWS\cite{awstextract}. This thesis does not use proprietary tools; it only focuses on free and open-source solutions.
 
 \section{Tesseract OCR\cite{tesseract}}
 
-Tesseract is an open-source OCR project that dates back all the way to the 90s of the 20th century. It was a proprietary software owned and developed by Hewlett-Packard Laboratories but open-sourced in 2005.
+\emph{Tesseract} is an open-source OCR project that dates back to the 90s of the 20th century. It was a proprietary software owned and developed by Hewlett-Packard Laboratories but open-sourced in 2005.
 
-Tesseract 4 uses LSTM neural networks and works by detecting lines of text, while the previous version, Tesseract 3, was detecting groups of characters. Both of these approaches can be used when using this tool. This tool is written in C++ and has almost no external dependencies, except for an IO (input-output) library.
+Tesseract 4 uses LSTM neural networks and works by detecting lines of text, while the previous version, Tesseract 3, detects groups of characters. Both of these approaches can be used when using this tool. This tool is written in C++ and has almost no external dependencies except an IO (input-output) library.
 
-Tesseract OCR only provides the OCR engine as a C++ library and a CLI (command line interface), but there are third part GUIs available and also linked on the tesseract GitHub repository page.
+Tesseract OCR only provides the OCR engine as a C++ library and a CLI (command line interface). However, third-party GUIs are available and linked on the tesseract GitHub repository page.
 
-Setting up tesseract can be more problematic than using a cloud-based solution, but now you can see the code that is processing your images and change/improve it as well.
+Setting up Tesseract can be more problematic than using a cloud-based solution, but all the code is accessible and can be changed or improved.
 
 \section{EasyOCR\cite{easyocr}}
 
-EasyOCR is an open-source OCR tool using the \emph{PyTorch}\cite{pytorch} AI library. EasyOCR aims to be a framework with interchangeable parts for other OCR implementations, but it has its own OCR engine built in it as well. You can use EasyOCR out of the box with python or you can implement your own/change the OCR engine and then EasyOCR will only provide a framework for that engine to be run in.
+EasyOCR is an open-source OCR tool using the \emph{PyTorch}\cite{pytorch} AI library. EasyOCR aims to be a framework with interchangeable parts for other OCR implementations, but it also has its OCR engine built into it. EasyOCR can be used out of the box with Python or implement a custom OCR engine, and then EasyOCR will only provide a framework for that engine to run in.
 
-EasyOCR is written in python and can be used online without downloading for example on HuggingFace \href{https://huggingface.co/spaces/tomofi/EasyOCR}{here}.
+EasyOCR is written in Python and can be used online without downloading, for example, on HuggingFace \href{https://huggingface.co/spaces/tomofi/EasyOCR}{here}.
 
 \section{Benchmarking different OCR solutions}
 
-We named some OCR engines but don't have any tools for measuring their performance. There are articles and research papers that focus on this, benchmarking these OCR engines and then measuring their accuracy\cite{benchmark}.
+Some articles and research papers focus on benchmarking these OCR engines and then measuring their accuracy\cite{benchmark}.
 
-In the cited article the OCR engines that are being compared are AWS Textract\cite{awstextract}, Google Cloud Vision API\cite{googleapi}, ABBYY FineReader 15, Microsoft Azure Computer Vision API\cite{azurevision} and Tesseract OCR Engine\cite{tesseract}. We already saw 4 of these in the previous sections, the only one I didn't mention yet is the ABBY FineReader.
+In the cited article, the OCR engines that are being compared are AWS Textract\cite{awstextract}, Google Cloud Vision API\cite{googleapi}, ABBYY FineReader 15, Microsoft Azure Computer Vision API\cite{azurevision} and Tesseract OCR Engine\cite{tesseract}. 4 of these OCRs are mentioned in the previous sections, the only one not mentioned yet is the ABBY FineReader.
 
-We can see that AWS Textract performed the best with Google Cloud Vision being just as good or just behind. AWS managed to get +98\% accuracy with normal text and also handwritten text, while for example, Azure's solution has under 20\% accuracy for the handwritten category. If we take away the handwritten texts, all OCRs performed quite well, with only a small amount of differences.
+We can see that AWS Textract performed the best, with Google Cloud Vision being just as good or just behind. AWS managed to get +98\% accuracy with typed and handwritten text, while, for example, Azure's solution has under 20\% accuracy for the handwritten category. If we remove the handwritten text, all OCRs performed exceptionally well, with minor differences.
 
-We can see that the only open-sourced project in the comparison, Tesseract, didn't perform as well as the best proprietary solutions. Only Azure's OCR performed worse than Tesseract in some categories.
+We can see that the only open-sourced project in the comparison, Tesseract, did not perform as well as the best proprietary solutions. Only Azure's OCR performed worse than Tesseract in some categories.
+
+\chapter{OCR engines}
+
+\chapter{Definition of the problem}
+
+\chapter{Implementation}
+
+At first, I started with tesseract OCR, but the results weren't that good so after a while, I decided to try and find some other OCR tool I could use. Then I found EasyOCR, a pytorch-based OCR engine, where the results were so much better that in the end, I decided to just run with it. - \textbf{REWRITE}
+
+\section{Used tools and libraries}
+
+\subsection{pandas}
+
+\subsection{PIL}
+
+\subsection{Tesseract}
+
+\textbf{translate this to English}
+
+prvni zpusob byl proste OCRnout images - to nefungovalo uplne nejlepe, tak jsem pridal kazdemu obrazku okraj pomoci funkce \emph{add\_margin(img)} a pak byla uspenost lepsi ale nikoliv super. Jako dalsi check jsem vyuzil slovnikovou kontrolu -> I also added a condition that found word has to have lenght greater of equal to 3, because finding only 2 or 1 char words was adding a lot of false positives (words flagged for translation but without the actual czech text).
+
+Jeste vyuzivam langdetect, ktery dela text -> language, kde primarni zamer byl brat jen ty obrazky, ktere budou detekovane jako cestina, ale nakonec to nebylo uplne stastne (jednoslovne obrazky byly recognized jako jiny slovansky jazyk a to jako jsem dolietal). Ted to pouzival jen tak, ze kdyz je text tak zmateny, ze z toho nejde ani rozpoznat jazyk, tak ho vyhazuji jako beztextovy. In the end I dropped this completely, even for the EasyOCR pipeline.
+
+\subsection{EasyOCR}
+
+For the EasyOCR pipeline, which is also the best performing pipeline on train data, I used the following steps. At first, I basically copied the tesseract pipeline, but in the end, I removed some steps and also added some new steps.
+
+Reconstruct urls from assets-u*.csv file. This is done in the ocr.ipynb notebook, in the first cells. Then I create a new csv file with the corresponding paths of the downloaded images.
+
+Preprocessing: Simple preprocessing was done just by removing the non-image files by looking at the type in the assets-u*.csv and also by looking at the extension of the file. Only after that, I save the paths of the downloaded images to for example \emph{csvs/loaded\_images\_um.csv}.
+
+Run the EasyOCR engine. This is done through the file \emph{easyocr\_run\_all.py}. I separated the actual OCR model into a file because I was running this computation on the Aura computing server, and I needed to set up the \emph{CUDA\_VISIBLE\_DEVICES}, so the computing will be GPU accelerated, and I didn't want to experiment with notebooks, and these settings. This file takes in the \emph{loaded\_images\_u*.csv} and returns another CSV with the OCRed words along with other metadata. A sample output of one image is below. The file generated from this step is for example \emph{csvs/easyocr/um\_trainset.csv} (which is the assets-um.csv OCRed).
+
+\begin{verbatim}
+    0,/data/xvalcik1/ui\_images\_download/img/presouvani/presouvani-podminena-kouzla/presouvani-podminena-kouzla-10-clean.png,"[([[659, 141], [1040, 141], [1040, 242], [659, 242]], 'pokud 2 ruce:', 0.9814824196590307), ([[1263, 140], [1646, 140], [1646, 242], [1263, 242]], 'pokud 2 ruce:', 0.8691733092857169), ([[726, 241], [1008, 241], [1008, 329], [726, 329]], 'Kloboukuj', 0.890718448642362), ([[1328, 233], [1615, 233], [1615, 333], [1328, 333]], 'Kloboukuj', 0.9472866960821049), ([[725, 337], [979, 337], [979, 423], [725, 423]], 'motýlkuj', 0.9982528021469238), ([[1273, 337], [1527, 337], [1527, 423], [1273, 423]], 'motýlkuj', 0.9986867684056133)]"
+\end{verbatim}
+
+
+
+
+All the steps done now can be viewed in the file pipeline.ipynb in the first code cell. Basically, the steps were as such:
+
+Extract just words from the outputs [([[659, 141], [1040, 141], [1040, 242], [659, 242]], 'pokud 2 ruce:', 0.9814824196590307), ([[1263, 140], [1646, 140], [1646, 242], [1263, 242]], 'pokud 2 ruce:', 0.8691733092857169) -> pokud 2 ruce: pokud 2 ruce:
+
+Doing a Czech language dictionary check -> leave in only words that are also in the syn2015 Czech corpus. This actually wasn't as useful as I thought it was going to be, because there are A LOT of words in the Czech corpus.
+Getting only words with len >= 3
+
+Remove English words. I downloaded a corpus of English words (\emph{slovnik/english\_dict.csv}) and if a found word was also present in the English corpus, I removed that word. This could be the most problematic step, maybe I could investigate it.
+
+\section{Problematic cases}
+
+In here I'll discuss some interesting cases that were causing problems.
+
+\chapter{Evaluation}
+
+So far I've only done a simple evaluation that went like this. This procedure was the same for all the evaluations done so far:
+
+We have a set of images, we run the OCR pipeline and we end up with a .csv file with two columns, first one is the path and the second one is the words that are considered to be present in the image. So the final .csv contains all the images flagged as positives, and if we do a set difference between the original set of images and the flagged images, we get the negatives.
+
+I did checks for false negatives and for false positives. They both went similarly. First I'd sample 100 images from one of the classes (positives or negatives), and then I'd look at the images and write the paths down if they were either a false-positive or false-negative. That's how I could really roughly estimate the percentages of both these false classes.
+
+\subsection{Evaluation of the test set on the current EasyOCR pipeline}
+
+With the evaluation procedure mentioned above, I evaluated the testset provided. The test set is all the images used for Umíme informatiku, that being 5256 images in total. After running the pipeline I ended up with 1188 images flagged as positive, meaning around 22.6\% of the images were flagged as having Czech text in them.
+Then I evaluated false positives/negatives.
+
+\subsubsection{False positives}
+None of the images was marked as false positive. Every image flagged as positive was indeed positive (had Czech text in it).
+
+\subsubsection{False negatives}
+With false negatives, this was quite worse. 18/100 were flagged as a false negative. This sums up to "only" to about 18\% of the false-negative rate, but when only around 22\% of images from the whole dataset were flagged as positive, that 18\% is actually pretty big. If we indeed had 18\% of images flagged as negative being actually positive, we missed almost half of the truly positive images in the dataset.
+
+\chapter{Conclusion}
 
 \end{document}
