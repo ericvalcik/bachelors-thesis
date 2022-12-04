@@ -358,7 +358,7 @@ At first I wanted to combine Tesseract and EasyOCR and use the outputs of both a
 
 \subsection{Extracting Text From OCR Data}
 
-The OCR generates data for each image, but the data contains more information than only the text detected in the image. It contains bordering points of the rectangle around the found word/character and confidence of model for that detection. In my work I ignore all the data except for the found text, so I parse the text from the returned string and save just the text in the dataframe.
+The OCR generates data for each image, but the data contains more information than only the text detected in the image. It contains bordering points of the rectangle around the found word/character and the confidence of the model for that detection. In my work, I ignore all the data except for the found text, so I parse the text from the returned string and save just the text in the DataFrame.
 
 An example of the extraction is as follows:
 
@@ -366,37 +366,33 @@ An example of the extraction is as follows:
 
 \subsection{Post-processing Of The OCRed Text}
 
-Another post-processing technique I use is running dictionary checks on the OCRed text. I run this check with the czech corpus syn2015 \textbf{(ADD LINK/REF)}. If a word is in OCRed text and is not in the czech corpus, I remove the word from the OCRed text. So in the end I am left only with those words that were found in the image and are also in the Czech corpus. This step does not bring the result that I expected, but is still useful.
+Another post-processing technique I use is running dictionary checks on the OCRed text. I run this check with the Czech Corpus syn2015~\cite{syn2015}. If a word is in OCRed text and is not in the Czech corpus, I remove the word from the OCRed text. So, in the end, I am left only with those words found in the image and the Czech corpus. This step does not bring the result I expected but is still valuable.
 
-I expected that leaving in only the words from the czech corpus would eliminate all the words from different languages (mainly english words), but czech language uses a lot of english words, so this step actually does not eliminate english words, but eliminates all the words that are not real words, for example punctiations, nonsense words.
+I expected that leaving in only the words from the Czech corpus would eliminate all the words from different languages (mainly English words), but the Czech language uses a lot of English words, so this step does not eliminate English words but eliminates all the words that are not actual words, for example, punctuation, nonsense words.
 
-Second language corpus I use is the English corpus. If a word that is in the text associated with an image, is also in the english corpus I remove the from the associated text.
+The second language corpus I use is the English corpus. I found an English corpus containing around 300 thousand words on kaggle~\cite{english-corpus}. If a word in the text associated with an image is also in the English corpus, I remove them from the associated text.
 
-The last post-processing step I make is removing every word that is shorter than 4 characters.
+The last post-processing step I make is removing every word that is shorter than four characters.
 
 \subsection{The Result}
 
-After all the previous steps, we are left with a list of words for each image. For the majority of the images this set is empty, and we can classify such images as having no czech text in them. Those images, that have some words associated are classified as having czech text in them and flagged for translation.
+After all the previous steps, we are left with a list of words for each image. This list is empty for most of the images, and we can classify such images as having no Czech text. Those images with some associated words are classified as having Czech text in them and flagged for translation.
 
-I put all the words classified as having czech text in a csv along with the classified.
+I put all the words classified as having Czech text in a CSV along with the classified.
 
-\textbf{INSERT FIGURE OF CSV}
-
-\textbf{translate this to english}
-
-prvni zpusob byl proste OCRnout images - to nefungovalo uplne nejlepe, tak jsem pridal kazdemu obrazku okraj pomoci funkce \emph{add\_margin(img)} a pak byla uspenost lepsi ale nikoliv super. Jako dalsi check jsem vyuzil slovnikovou kontrolu -> I also added a condition that found word has to have lenght greater of equal to 3, because finding only 2 or 1 char words was adding a lot of false positives (words flagged for translation but without the actual czech text).
-
-Jeste vyuzivam langdetect, ktery dela text -> language, kde primarni zamer byl brat jen ty obrazky, ktere budou detekovane jako cestina, ale nakonec to nebylo uplne stastne (jednoslovne obrazky byly recognized jako jiny slovansky jazyk a to jako jsem dolietal). Ted to pouzival jen tak, ze kdyz je text tak zmateny, ze z toho nejde ani rozpoznat jazyk, tak ho vyhazuji jako beztextovy. In the end I dropped this completely, even for the EasyOCR pipeline.
-
-\section{Problematic cases}
-
-In here I'll discuss some interesting cases that were causing problems.
+\begin{figure}[h]
+\caption{First 13 lines of the result CSV}
+\includegraphics[width=\textwidth]{images/result-csv.png}
+\centering
+\end{figure}
 
 \chapter{Evaluation}\label{chap:evaluation}
 
-So far I've only done a simple evaluation that went like this. This procedure was the same for all the evaluations done so far:
+\textbf{REWRITE}
 
-We have a set of images, we run the OCR pipeline and we end up with a .csv file with two columns, first one is the path and the second one is the words that are considered to be present in the image. So the final .csv contains all the images flagged as positives, and if we do a set difference between the original set of images and the flagged images, we get the negatives.
+So far, I've only done a simple evaluation that went like this. This procedure was the same for all the evaluations done so far:
+
+We have a set of images, we run the whole pipeline and we end up with a CSV file with two columns, first one is the path and the second one is the words that are considered to be present in the image. So the final .csv contains all the images flagged as positives, and if we do a set difference between the original set of images and the flagged images, we get the negatives.
 
 I did checks for false negatives and for false positives. They both went similarly. First I'd sample 100 images from one of the classes (positives or negatives), and then I'd look at the images and write the paths down if they were either a false-positive or false-negative. That's how I could really roughly estimate the percentages of both these false classes.
 
@@ -410,6 +406,10 @@ None of the images was marked as false positive. Every image flagged as positive
 
 \subsubsection{False negatives}
 With false negatives, this was quite worse. 18/100 were flagged as a false negative. This sums up to "only" to about 18\% of the false-negative rate, but when only around 22\% of images from the whole dataset were flagged as positive, that 18\% is actually pretty big. If we indeed had 18\% of images flagged as negative being actually positive, we missed almost half of the truly positive images in the dataset.
+
+\section{Problematic cases}
+
+In here I'll discuss some interesting cases that were causing problems.
 
 \chapter{Conclusion}
 
