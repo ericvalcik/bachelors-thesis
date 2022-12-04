@@ -388,32 +388,6 @@ prvni zpusob byl proste OCRnout images - to nefungovalo uplne nejlepe, tak jsem 
 
 Jeste vyuzivam langdetect, ktery dela text -> language, kde primarni zamer byl brat jen ty obrazky, ktere budou detekovane jako cestina, ale nakonec to nebylo uplne stastne (jednoslovne obrazky byly recognized jako jiny slovansky jazyk a to jako jsem dolietal). Ted to pouzival jen tak, ze kdyz je text tak zmateny, ze z toho nejde ani rozpoznat jazyk, tak ho vyhazuji jako beztextovy. In the end I dropped this completely, even for the EasyOCR pipeline.
 
-\subsection{EasyOCR}
-
-For the EasyOCR pipeline, which is also the best performing pipeline on train data, I used the following steps. At first, I basically copied the tesseract pipeline, but in the end, I removed some steps and also added some new steps.
-
-Reconstruct urls from assets-u*.csv file. This is done in the ocr.ipynb notebook, in the first cells. Then I create a new csv file with the corresponding paths of the downloaded images.
-
-Preprocessing: Simple preprocessing was done just by removing the non-image files by looking at the type in the assets-u*.csv and also by looking at the extension of the file. Only after that, I save the paths of the downloaded images to for example \emph{csvs/loaded\_images\_um.csv}.
-
-Run the EasyOCR engine. This is done through the file \emph{easyocr\_run\_all.py}. I separated the actual OCR model into a file because I was running this computation on the Aura computing server, and I needed to set up the \emph{CUDA\_VISIBLE\_DEVICES}, so the computing will be GPU accelerated, and I didn't want to experiment with notebooks, and these settings. This file takes in the \emph{loaded\_images\_u*.csv} and returns another CSV with the OCRed words along with other metadata. A sample output of one image is below. The file generated from this step is for example \emph{csvs/easyocr/um\_trainset.csv} (which is the assets-um.csv OCRed).
-
-\begin{verbatim}
-    0,/data/xvalcik1/ui\_images\_download/img/presouvani/presouvani-podminena-kouzla/presouvani-podminena-kouzla-10-clean.png,"[([[659, 141], [1040, 141], [1040, 242], [659, 242]], 'pokud 2 ruce:', 0.9814824196590307), ([[1263, 140], [1646, 140], [1646, 242], [1263, 242]], 'pokud 2 ruce:', 0.8691733092857169), ([[726, 241], [1008, 241], [1008, 329], [726, 329]], 'Kloboukuj', 0.890718448642362), ([[1328, 233], [1615, 233], [1615, 333], [1328, 333]], 'Kloboukuj', 0.9472866960821049), ([[725, 337], [979, 337], [979, 423], [725, 423]], 'motýlkuj', 0.9982528021469238), ([[1273, 337], [1527, 337], [1527, 423], [1273, 423]], 'motýlkuj', 0.9986867684056133)]"
-\end{verbatim}
-
-
-
-
-All the steps done now can be viewed in the file pipeline.ipynb in the first code cell. Basically, the steps were as such:
-
-Extract just words from the outputs [([[659, 141], [1040, 141], [1040, 242], [659, 242]], 'pokud 2 ruce:', 0.9814824196590307), ([[1263, 140], [1646, 140], [1646, 242], [1263, 242]], 'pokud 2 ruce:', 0.8691733092857169) -> pokud 2 ruce: pokud 2 ruce:
-
-Doing a Czech language dictionary check -> leave in only words that are also in the syn2015 Czech corpus. This actually wasn't as useful as I thought it was going to be, because there are A LOT of words in the Czech corpus.
-Getting only words with len >= 3
-
-Remove English words. I downloaded a corpus of English words (\emph{slovnik/english\_dict.csv}) and if a found word was also present in the English corpus, I removed that word. This could be the most problematic step, maybe I could investigate it.
-
 \section{Problematic cases}
 
 In here I'll discuss some interesting cases that were causing problems.
