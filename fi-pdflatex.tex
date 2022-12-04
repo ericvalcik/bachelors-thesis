@@ -346,6 +346,8 @@ Another technique I try is thresholding, which converts the image to black and w
 
 With either of these preprocessing techniques, I do not achieve any significant improvement with Tesseract.
 
+This line of text is written locally from VS Code :D.
+
 \textbf{translate this to english}
 
 prvni zpusob byl proste OCRnout images - to nefungovalo uplne nejlepe, tak jsem pridal kazdemu obrazku okraj pomoci funkce \emph{add\_margin(img)} a pak byla uspenost lepsi ale nikoliv super. Jako dalsi check jsem vyuzil slovnikovou kontrolu -> I also added a condition that found word has to have lenght greater of equal to 3, because finding only 2 or 1 char words was adding a lot of false positives (words flagged for translation but without the actual czech text).
