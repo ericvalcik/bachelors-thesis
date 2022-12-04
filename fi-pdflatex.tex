@@ -321,6 +321,8 @@ Here, \emph{assets-ui.csv} is the provided CSV file with all the assets used for
 
 In the first approach, I use \hyperref[chap:ocr-tesseract]{Tesseract} to get text data of each image. This approach isn't that successful as the generated text often does not correspond to the text inside the images. For improvement, I preprocess the images and then OCR them with Tesseract. Some preprocessing methods bring some better results, but the precision of the OCRed text is still low.
 
+\subsection{Preprocessing}
+
 One preprocessing technique I used is adding a white margin to every image.
 
 \begin{minted}{python}
@@ -346,7 +348,39 @@ Another technique I try is thresholding, which converts the image to black and w
 
 With either of these preprocessing techniques, I do not achieve any significant improvement with Tesseract.
 
-This line of text is written locally from VS Code :D.
+\subsection{Change The OCR Engine}
+
+Preprocessing alone does not bring the results I want, so I started looking into other OCR engines. The second OCR I try is EasyOCR. EasyOCR works out of the box better than Tesseract, without any preprocessing. I OCR the whole dataset and with small testing (picking 100 random images) I see that the precision is around 95-98\%.
+
+The code for EasyOCR OCRing given dataset is separated into its own \emph{.py} file. This is because EasyOCR works best when running on a GPU, but on Aura, before running a command the user has to specify \emph{CUDA\_VISIBLE\_DEVICES}, so the computing will be GPU accelerated. When running on GPU the computation is about 5x faster than running it purely on Aura's CPU.
+
+At first I wanted to combine Tesseract and EasyOCR and use the outputs of both and just merge the outputted text, but after merging them I decided to abandon the idea and use just EasyOCR's output, because in most cases Tesseract does not add to the OCR text from EasyOCR, but adds nonsense characters to the output that are not useful.
+
+\subsection{Extracting Text From OCR Data}
+
+The OCR generates data for each image, but the data contains more information than only the text detected in the image. It contains bordering points of the rectangle around the found word/character and confidence of model for that detection. In my work I ignore all the data except for the found text, so I parse the text from the returned string and save just the text in the dataframe.
+
+An example of the extraction is as follows:
+
+[([[659, 141], [1040, 141], [1040, 242], [659, 242]], 'pokud 2 ruce:', 0.9814824196590307), ([[1263, 140], [1646, 140], [1646, 242], [1263, 242]], 'pokud 2 ruce:', 0.8691733092857169) -> 'pokud 2 ruce: pokud 2 ruce:'
+
+\subsection{Post-processing Of The OCRed Text}
+
+Another post-processing technique I use is running dictionary checks on the OCRed text. I run this check with the czech corpus syn2015 \textbf{(ADD LINK/REF)}. If a word is in OCRed text and is not in the czech corpus, I remove the word from the OCRed text. So in the end I am left only with those words that were found in the image and are also in the Czech corpus. This step does not bring the result that I expected, but is still useful.
+
+I expected that leaving in only the words from the czech corpus would eliminate all the words from different languages (mainly english words), but czech language uses a lot of english words, so this step actually does not eliminate english words, but eliminates all the words that are not real words, for example punctiations, nonsense words.
+
+Second language corpus I use is the English corpus. If a word that is in the text associated with an image, is also in the english corpus I remove the from the associated text.
+
+The last post-processing step I make is removing every word that is shorter than 4 characters.
+
+\subsection{The Result}
+
+After all the previous steps, we are left with a list of words for each image. For the majority of the images this set is empty, and we can classify such images as having no czech text in them. Those images, that have some words associated are classified as having czech text in them and flagged for translation.
+
+I put all the words classified as having czech text in a csv along with the classified.
+
+\textbf{INSERT FIGURE OF CSV}
 
 \textbf{translate this to english}
 
